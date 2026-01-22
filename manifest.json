@@ -1,0 +1,13 @@
+{
+  "name": "Ticket Booking Practice",
+  "short_name": "BMS Practice",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d32f2f",
+  "icons": [{
+    "src": "https://cdn-icons-png.flaticon.com/512/929/929426.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}
