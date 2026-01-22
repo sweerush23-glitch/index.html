@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seat Selection</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d32f2f">
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f5f5;
+}
+
+header {
+  background: linear-gradient(90deg,#d32f2f,#b71c1c);
+  color: white;
+  padding: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.notice {
+  background: #fff3cd;
+  color: #856404;
+  padding: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.timer {
+  text-align: center;
+  color: #d32f2f;
+  font-weight: bold;
+  padding: 6px;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-around;
+  font-size: 12px;
+  padding: 8px;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.available { background: white; border: 1px solid #4caf50; }
+.selected { background: #4caf50; }
+.sold { background: #aaa; }
+
+.category {
+  background: white;
+  margin: 10px;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.category h4 {
+  margin: 5px 0;
+}
+
+.seats {
+  display: grid;
+  grid-template-columns: repeat(8,1fr);
+  gap: 6px;
+}
+
+.seat {
+  padding: 8px 0;
+  font-size: 11px;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+}
+
+.seat.selected {
+  background: #4caf50;
+  color: white;
+}
+
+.seat.sold {
+  background: #ccc;
+  color: #777;
+  border: none;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+}
+
+.footer button {
+  width: 100%;
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<header>BookMyShow • Seat Selection</header>
+
+<div class="notice">Hurry! Few seats left at this price</div>
+<div class="timer">Time left: <span id="time">90</span>s</div>
+
+<div class="legend">
+  <div><span class="dot available"></span>Available</div>
+  <div><span class="dot selected"></span>Selected</div>
+  <div><span class="dot sold"></span>Sold</div>
+</div>
+
+<div class="category">
+<h4>Silver ₹2500</h4>
+<div class="seats" id="silver"></div>
+</div>
+
+<div class="category">
+<h4>Gold ₹4500</h4>
+<div class="seats" id="gold"></div>
+</div>
+
+<div class="category">
+<h4>Platinum ₹6500</h4>
+<div class="seats" id="plat"></div>
+</div>
+
+<div class="footer">
+<button id="pay" disabled>Pay ₹0</button>
+</div>
+
+<script>
+let selectedSeats = [];
+let total = 0;
+let time = 90;
+
+function createSeats(id, price) {
+  const box = document.getElementById(id);
+  for (let i = 1; i <= 24; i++) {
+    const s = document.createElement("div");
+    s.className = "seat";
+    s.innerText = i;
+
+    if (Math.random() < 0.4) {
+      s.classList.add("sold");
+    } else {
+      s.onclick = () => toggleSeat(s, price);
+    }
+    box.appendChild(s);
+  }
+}
+
+function toggleSeat(seat, price) {
+  if (seat.classList.contains("selected")) {
+    seat.classList.remove("selected");
+    total -= price;
+  } else {
+    if (selectedSeats.length >= 6) {
+      alert("Maximum 6 tickets allowed");
+      return;
+    }
+    seat.classList.add("selected");
+    total += price;
+  }
+  document.getElementById("pay").innerText = "Pay ₹" + total;
+  document.getElementById("pay").disabled = total === 0;
+}
+
+createSeats("silver",2500);
+createSeats("gold",4500);
+createSeats("plat",6500);
+
+setInterval(()=>{
+  time--;
+  document.getElementById("time").innerText = time;
+  if(time===0){
+    alert("Session expired. Seats released.");
+    location.reload();
+  }
+},1000);
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
+</body>
+</html>
